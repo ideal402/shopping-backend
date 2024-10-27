@@ -27,25 +27,20 @@ userController.createUser = async (req, res) => {
   }
 };
 
-userController.login = async (req, res) => {
+userController.getUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const userId = req.userId;
 
-    const user = await User.findOne({ email: email });
-    if (!user) {
-      throw new Error("이메일 혹은 비밀번호를 확인해 주세요");
+    const user = await User.findById(userId);
+    if (user){
+      return res.status(200).json({ status: "success", user});
+      
     }
-
-    const isMatch = await bcrypt.compareSync(password, user.password);
-    if (!isMatch) {
-        return res.status(400).json({ status: "fail", error: "이메일 혹은 비밀번호를 확인해 주세요" });
-    }
-
-    return res.status(200).json({ status: "success" });
+    throw new Error("잘못된 토큰");
 
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
-};
+}
  
 module.exports = userController;
