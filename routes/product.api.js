@@ -9,5 +9,6 @@ router.post(
   authController.checkAdmin,
   productController.createProduct
 );
+router.get("/", productController.getProduct);
 
 module.exports = router;
