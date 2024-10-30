@@ -1,7 +1,7 @@
 const Product = require("../model/Product");
 
 const productController = {};
-
+const PAGE_SIZE = 5;
 productController.createProduct = async (req, res) => {
   try {
     let {
@@ -37,10 +37,22 @@ productController.createProduct = async (req, res) => {
 
 productController.getProduct = async (req, res) => {
   try {
-    const data = await Product.find({})
-    res.status(200).json({ status: "success", data:data });
+    const { page, name } = req.query;
+    const cond = name ? { name: { $regex: name, $options: "i" } } : {};
+    let query = Product.find(cond);
+    let response = {status:"success"}
+    if (page) {
+      query.skip(PAGE_SIZE * (page - 1)).limit(PAGE_SIZE);
+      const totalItemNumber = await Product.find(cond).countDocuments();
+      const totalPageNum = Math.ceil(totalItemNumber / PAGE_SIZE);
+      response.totalPageNum = totalPageNum;
+    }
+
+    const productList = await query.exec();
+    response.data = productList
+    res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
-}
+};
 module.exports = productController;
