@@ -40,7 +40,7 @@ productController.getProduct = async (req, res) => {
     const { page, name } = req.query;
     const cond = name ? { name: { $regex: name, $options: "i" } } : {};
     let query = Product.find(cond);
-    let response = {status:"success"}
+    let response = { status: "success" };
     if (page) {
       query.skip(PAGE_SIZE * (page - 1)).limit(PAGE_SIZE);
       const totalItemNumber = await Product.find(cond).countDocuments();
@@ -49,10 +49,49 @@ productController.getProduct = async (req, res) => {
     }
 
     const productList = await query.exec();
-    response.data = productList
+    response.data = productList;
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
 };
+
+productController.updateProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const {
+      sku,
+      name,
+      image,
+      category,
+      description,
+      price,
+      stock,
+      status,
+      isDelete,
+    } = req.body;
+    const product = await Product.findByIdAndUpdate(
+      { _id: productId },
+      {
+        sku,
+        name,
+        image,
+        category,
+        description,
+        price,
+        stock,
+        status,
+        isDelete,
+      },
+      {new:true}
+    );
+    if(!product){
+      throw new Error("can not find product");
+    }
+    res.status(200).json({ status: "success", product });
+  } catch (error) {
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
 module.exports = productController;
