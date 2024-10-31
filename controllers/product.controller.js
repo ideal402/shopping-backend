@@ -39,7 +39,7 @@ productController.getProduct = async (req, res) => {
   try {
     const { page, name } = req.query;
     const cond = name ? { name: { $regex: name, $options: "i" } } : {};
-    let query = Product.find(cond);
+    let query = Product.find(cond).sort({ createdAt: -1 });
     let response = { status: "success" };
     if (page) {
       query.skip(PAGE_SIZE * (page - 1)).limit(PAGE_SIZE);
