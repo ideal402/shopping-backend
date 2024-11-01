@@ -16,5 +16,11 @@ router.put(
   authController.checkAdmin,
   productController.updateProduct
 );
+router.delete(
+  "/:id",
+  authController.authenticate,
+  authController.checkAdmin,
+  productController.deleteProduct
+);
 
 module.exports = router;
