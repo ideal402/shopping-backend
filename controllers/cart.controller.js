@@ -5,7 +5,7 @@ cartController.addItemToCart = async (req, res) => {
   try {
     const userId = req.userId;
     const { productId, size, qty } = req.body;
-
+  
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
@@ -14,13 +14,14 @@ cartController.addItemToCart = async (req, res) => {
     }
 
     const existItem = cart.items.find(
-      (item) => item.productId.equals(productId) && item.size === size
+      (item) => item._id.equals(productId) && item.size === size
     );
     if (existItem) {
       throw new Error("이미 담겨진 아이템입니다.");
     }
 
     cart.items = [...cart.items, { productId, size, qty }];
+    console.log("🚀 ~ cartController.addItemToCart= ~ cart.items:", cart.items.length)
     await cart.save();
 
     res
