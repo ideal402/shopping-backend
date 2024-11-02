@@ -21,7 +21,6 @@ cartController.addItemToCart = async (req, res) => {
     }
 
     cart.items = [...cart.items, { productId, size, qty }];
-    console.log("🚀 ~ cartController.addItemToCart= ~ cart.items:", cart.items.length)
     await cart.save();
 
     res
