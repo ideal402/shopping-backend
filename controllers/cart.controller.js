@@ -75,7 +75,10 @@ cartController.updateQty = async (req, res) => {
     const id = req.params.id;
     const qty = req.body.value;
 
-    const cart = await Cart.findOne({ userId: userId });
+    const cart = await Cart.findOne({ userId: userId }).populate({
+      path: "items",
+      populate: { path: "productId", model: "Product" },
+    });;
     if (!cart) throw new Error("카트를 찾을 수 없습니다.");
 
     const index = cart.items.findIndex((item) => item._id.equals(id));
