@@ -122,7 +122,7 @@ productController.getProductDetail = async (req, res) => {
 
 productController.checkStock = async (item) => {
   const product = await Product.findById(item.productId);
-  console.log("🚀 ~ productController.checkStock= ~ product:", product)
+  
   if (product.stock[item.size] < item.qty) {
     return {
       isVerify: false,
@@ -130,24 +130,39 @@ productController.checkStock = async (item) => {
     };
   }
 
-  const newStock = { ...product.stock };
-  newStock[item.size] -= item.qty;
-  product.stock = newStock;
-
-  await product.save();
-
-  return { isVerify: true };
+  return { isVerify: true, product };
 };
 
 productController.checkItemListStock = async (itemList) => {
   const insufficientStockItems = [];
+  const productToUpdate = [];
+
   await Promise.all(
     itemList.map(async (item) => {
       const stockCheck = await productController.checkStock(item);
       if (!stockCheck.isVerify) {
         insufficientStockItems.push({ item, message: stockCheck.message });
+      }else{
+        productToUpdate.push({
+          product: stockCheck.product,
+          size: item.size,
+          qty: item.qty,
+        });
       }
-      return stockCheck;
+    })
+  );
+
+  if (insufficientStockItems.length > 0) {
+    return insufficientStockItems;
+  }
+
+  await Promise.all(
+    productToUpdate.map(async ({ product, size, qty }) => {
+      const newStock = { ...product.stock };
+      console.log("🚀 ~ productToUpdate.map ~ newStock:", newStock)
+      newStock[size] -= qty;
+      product.stock = newStock;
+      await product.save();
     })
   );
 
