@@ -1,13 +1,22 @@
 const mongoose = require("mongoose");
 const Product = require("./Product");
+const User = require("./User");
 const Schema = mongoose.Schema;
 
 const orderSchema = Schema(
   {
     userId: { type: mongoose.ObjectId, ref: User, required:true},
     status: { type: String, default:"preparing"},
-    shipTo:{ type: String, required: true },
-    contact:{ type: String, required: true },
+    shipTo:{
+      address:{ type: String, required: true },
+      city:{ type: String, required: true },
+      zip:{ type: String, required: true },
+    },
+    contact:{
+      firstName: { type: String, required: true },
+      lastName: { type: String, required: true },
+      contact: { type: String, required: true },
+    },
     totalPrice:{ type: Number, required: true, default:0 },
     orderNum: {type: String},
     items: [
