@@ -4,7 +4,7 @@ const Order = require("../model/Order");
 const productController = require("./product.controller");
 const { randomStringGenerator } = require("../utils/randomStringGenerator");
 const { populate } = require("dotenv");
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 3;
 
 orderController.createOrder = async (req, res) => {
   try {
