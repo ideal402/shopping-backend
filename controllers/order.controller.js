@@ -3,11 +3,11 @@ const orderController = {};
 const Order = require("../model/Order");
 const productController = require("./product.controller");
 const { randomStringGenerator } = require("../utils/randomStringGenerator");
+const { populate } = require("dotenv");
 
 orderController.createOrder = async (req, res) => {
   try {
     const userId = req.userId;
-    console.log("🚀 ~ orderController.createOrder= ~ req.body:", req.body);
 
     const { shipTo, contact, totalPrice, orderList } = req.body;
 
@@ -23,7 +23,7 @@ orderController.createOrder = async (req, res) => {
     }
 
     const items = orderList.map((item) => ({
-      ProductId: item.productId,
+      productId: item.productId,
       size: item.size,
       qty: item.qty,
       price: item.price,
@@ -42,7 +42,25 @@ orderController.createOrder = async (req, res) => {
 
     res.status(200).json({ status: "success", data: newOrder.orderNum });
   } catch (error) {
-    console.log("🚀 ~ orderController.createOrder= ~ error:", error);
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
+orderController.getOrder = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const order = await Order.find({ userId: userId }).populate({
+      path: "items",
+      populate: {
+        path: "productId",
+        model: "Product",
+      },
+    });
+    if (!order) throw new Error("주문을 찾을 수 없습니다.");
+
+    res.status(200).json({ status: "success", data: order });
+  } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
 };

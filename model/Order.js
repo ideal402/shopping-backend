@@ -22,7 +22,7 @@ const orderSchema = Schema(
     orderNum: {type: String},
     items: [
       {
-        ProductId: { type: mongoose.ObjectId, ref: Product, required:true },
+        productId: { type: mongoose.ObjectId, ref: Product, required:true },
         size: { type: String, required: true },
         qty: { type: Number, required:true, default: 1 },
         price:{ type: Number, required: true },
