@@ -107,7 +107,8 @@ orderController.getOrderList = async (req, res) => {
 
 orderController.updateOrder = async (req, res) => {
   try {
-    const orderId= req.params._id
+    const orderId= req.params.id
+    console.log("🚀 ~ orderController.updateOrder= ~ req.params:", req.params)
     const {status} = req.body
     
     const order = await Order.findById(orderId);
