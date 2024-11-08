@@ -107,7 +107,8 @@ orderController.getOrderList = async (req, res) => {
 
 orderController.updateOrder = async (req, res) => {
   try {
-    const {orderId, status} = req.body
+    const orderId= req.params
+    const {status} = req.body
     
     const order = await Order.findById(orderId);
     if(!order) throw new Error("주문을 찾을 수 없습니다.");
